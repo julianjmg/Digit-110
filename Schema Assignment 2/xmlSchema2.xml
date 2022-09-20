@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+ul = undeline
+sen = sentence
+sc = stamp cover (words/ characters that are touching the stamp)
+-->
+<?xml-model href="Schema2.rnc" type="application/relax-ng-compact-syntax"?>
+<xml>
+    <pre><title><ul>BALLAD OF BOOKER T.</ul></title>
+<author>Langston Hughes</author> </pre>
+    <body>
+        <line><sen waypoint="start" n="1"/>Booker T. Was a practical man.<sen waypoint="end" n="1"
+            /></line>
+        <line><sen waypoint="start" n="2"/>He said, Till the soil</line>
+        <line>And learn from the land.<sen waypoint="end" n="2"/></line>
+        <line><sen waypoint="start" n="3"/>Let down your <sc stampText="The Library of Congress"
+                >bucket</sc></line>
+        <line>Where you are.<sen waypoint="end" n="3"/></line>
+        <line><sen waypoint="start" n="4"/>Your fate is <sc stampText="The Library of Congress"
+                >here</sc></line>
+        <line>And not afar.<sen waypoint="end" n="4"/></line>
+        <line><sen waypoint="start" n="5"/>To help <sc stampText="The Library of Congress"
+                >yourself</sc></line>
+        <line>And your fellow <sc stampText="The Library of Congress">man</sc>,</line>
+        <line>Train your head,</line>
+        <line>Your heart, <ul>and your hand</ul>.<sen waypoint="end" n="5"/></line>
+        <line><sen waypoint="start" n="6"/>For smartness alone's</line>
+        <line>Surely not meet—</line>
+        <line>If you haven't at the same time</line>
+        <line>Got something to eat.<sen waypoint="end" n="6"/></line>
+        <line><sen waypoint="start" n="7"/>Thus at Tuskegee</line>
+        <line>He built a school</line>
+        <line>With book-learning there</line>
+        <line>And the workman's tool.<sen waypoint="end" n="7"/></line>
+        <line><sen waypoint="start" n="8"/>He started out</line>
+        <line>In a simple way—</line>
+        <line>For yesterday</line>
+        <line>Was <ul>not</ul> today.<sen waypoint="end" n="8"/></line>
+        <line><sen waypoint="start" n="9"/>Sometimes he had</line>
+        <line>Compromise in his talk—</line>
+        <line>For a man must crawl</line>
+        <line>Before he can walk—</line>
+        <line>And in Alabama in '85</line>
+        <line>A joker was lucky</line>
+        <line>To be alive.<sen waypoint="end" n="9"/></line>
+        <line><sen waypoint="start" n="10"/>But Booker T.</line>
+        <line>Was nobody's fool:</line>
+        <line>You may carve a dream</line>
+        <line>With an humble tool.<sen waypoint="end" n="10"/></line>
+        <line><sen waypoint="start" n="11"/>The tallest tower</line>
+        <line>Can tumble down</line>
+        <line>If it be not rooted</line>
+        <line>In solid ground.<sen waypoint="end" n="11"/></line>
+        <line><sen waypoint="start" n="12"/>So, being a far-seeing</line>
+        <line>Practical man,</line>
+        <line>He said, Train your head,</line>
+        <line>Your heart, <ul>and your hand</ul>.<sen waypoint="end" n="12"/></line>
+        <line><sen waypoint="start" n="13"/>Your fate is here</line>
+        <line>And not afar,</line>
+        <line>So let down your bucket</line>
+        <line>Where you are.<sen waypoint="end" n="13"/></line>
+    </body>
+    <post>
+        <signature how="handwritten">Langston Hughes</signature> Final Draft Hollow Hills Farm,
+        Monterey, California, June 1, 1941. </post>
+    <metadata>
+        <author>Langston Hughes</author>
+        <date>06-01-1941</date>
+        <location>Hollow Hills Farm, Monterey, California</location>
+        <citation>Citation: Drafts of Langston Hughes's poem "Ballad of Booker T.," 30 May–1 June
+            1941. (Langston Hughes Collection) Manuscript Division, Library of Congress, Washington,
+            D.C. </citation>
+    </metadata>
+</xml>
