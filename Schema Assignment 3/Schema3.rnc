@@ -1,0 +1,10 @@
+start = xml
+xml = element xml{titleGroup, subGroup+}
+titleGroup = element titleGroup {title, p+}
+title = element title {text}
+p = element p {text}
+subGroup = element subGroup {subTitle, (section | p | bullet | codeBlock)*}
+section = element section {text}
+subTitle = element subTitle {text}
+bullet = element bullet {text}
+codeBlock = element codeBlock {text}

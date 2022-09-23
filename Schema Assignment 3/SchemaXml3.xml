@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="Schema3.rnc" type="application/relax-ng-compact-syntax"?>
+<xml>
+    <titleGroup>
+        <title>Guide to Schema Writing with Relax NG</title>
+        <p>When we began writing XML, we learned about well-formedness: that all XML documents must
+            have a single root element, all elements must be properly nested, and element and
+            attribute tags must be written correctly so that a computer can parse a file as XML. But
+            we also code XML documents for human beings wishing to work in an organized and
+            systematic way, and for this reason, we write schema rules and we apply schema files in
+            our projects to check our XML against the rules we create. When we check our XML files
+            against a set of schema rules, we are checking their validity. We can use validity
+            checks to make sure we’re spelling element names properly, writing attribute names and
+            values consistently, and nesting elements in a way that makes sense to us that we want
+            to hold consistent: as for example, always nesting a &lt;title&gt; element inside a
+            &lt;heading&gt; element.</p>
+
+        <p>Writing schema rules is closely related to performing a document analysis to record the
+            key features of a text that you wish to mark up in XML. When you write a schema, you
+            formalize those rules. Over the course of a project, people tend to modify their coding
+            rules and frequently revise their schema files. In turn coders on a project apply
+            updated schema rules to update their coding, change their tag names, the order of
+            particular tags, the values they are inputting for attributes, etc. Knowing how to write
+            a schema and knowing how to apply it and update it can thus give you the know-how
+            necessary for managing and streamlining your work, and a team’s work on an XML
+            project.</p>
+    </titleGroup>
+
+    <subGroup>
+        <subTitle>Relax NG: A Little Background</subTitle>
+        <p>RELAX NG is an acronym for REgular LAnguage description for XML Next Generation, and as
+            the name implies, it took some “generational” cycles or a long period of time to
+            develop, roughly concurrent with the early history of XML. There are a couple of
+            different “syntaxes” for writing Relax NG, an XML-based version and a Compact version.
+            The XML-based version is written as XML code with elements and attributes, which makes
+            it a little more difficult to write and follow than the Compact version, so we’ve opted
+            for the Compact version for our work. Later on, we’ll be learning an XML-based schema
+            language called Schematron that we can use for specialized, targeted needs in project
+            development. For now, we want you to be aware that there are a few different ways to
+            write schema languages for XML projects, and that we are learning one specific way that
+            was designed from the outset to be “simple and easy to learn,” that is, optimized for
+            organizing and managing XML projects. (Credits: For further reading on the background of
+            Relax NG and its formative goal of being “simple and easy to learn,” see Eric van der
+            Vlist’s online book, and the collection of resources at http://c2.com/cgi/wiki?RelaxNg.
+            We’ve drawn from David Birnbaum’s tutorial on Relax NG to help produce this page. )</p>
+    </subGroup>
+
+    <subGroup>
+        <subTitle>Relax NG Compact Syntax: How We Write It</subTitle>
+        <p>In the Compact Syntax of Relax NG, we write rule statements in the form of named
+            patterns, that look like this:</p>
+
+        <codeBlock>label = type name {content}</codeBlock>
+        <p>Each named pattern in Compact Syntax takes this basic form: The label is a name for the
+            XML “object” you’re describing; type indicates what kind of object it is, an element or
+            an attribute; name is the literal name of the element or attribute; and {content}
+            indicates what the element or attribute is allowed to contain (such as: other elements,
+            an attribute value of a particular kind, an attribute, text, etc. The label can be
+            anything you find convenient, but it’s usually easiest for us to deal with when the
+            label is the same as the name. Here’s an example in practice, from the very beginning of
+            a file:</p>
+
+        <codeBlock>start = root root = element root {head, body}</codeBlock>
+        <p>Our first rule in Relax-NG needs to indicate how we begin, and it always has the label
+            “start,” which is a reserved word for this purpose in Relax-NG. Here, we’re defining the
+            root element for our XML file, and we’re simply using the label and element name “root”
+            for it. (If you wanted to call the root element something else, of course you can, and
+            this is the place to specify that. So if you wanted to call it, “letter,” you’d
+            write:</p>
+
+        <codeBlock>start = letter letter = element letter {head, body}</codeBlock>
+        <p>The second line here defines letter as an element named letter, and it holds inside the
+            curly braces { } what the root element is allowed to contain: in this case exactly one
+            head and one body. We need to write more rules to define head and body as elements, and
+            to specify what they will contain.</p>
+    </subGroup>
+
+    <subGroup>
+        <subTitle>Defining Content Models: { }</subTitle>
+        <p>The part of the rule wrapped in curly braces is called the “content model,” and it’s
+            where we essentially write the rules for what an element or attribute is allowed to
+            contain in our nested XML hierarchy. The words inside the curly braces are, themselves,
+            labels which must be defined somewhere in the schema. The way we write the rule
+            specifies what’s allowed inside, in what order, and how many of it we permit. The order
+            we set is determined by our combination indicators, and the quantity we expect is
+            determined by repetition indicators.</p>
+
+        <section>Combination Indicators:</section>
+        <p>We commonly use two combination indicators for multiple kinds of combinations: One kind
+            of combination is a sequence, in which we want elements or attributes to come in a
+            particular order. The second kind of combination is a choice in which we indicate that
+            either one OR another is permitted, but not both. (Sidenote: There’s a third kind of
+            combination indicator called “interleave,” which is signalled with an ampersand ( &amp;
+            ), but we won’t really need to use it once we show you “grouping” below.)</p>
+
+        <bullet>The comma ( , ): This indicates you are requiring a sequence in a particular order.
+            For example:</bullet>
+        <codeBlock>letter = element letter {head, body}</codeBlock>
+        <p>In the rule above, the comma indicates that a head must come before a body.</p>
+        <bullet>The “pipe” or vertical bar ( | ): This indicates a choice, either one | or the other
+            must occur, For example:</bullet>
+        <codeBlock>letter = element letter {head | body}</codeBlock>
+        <p>In this rule, the pipe indicates that you may either have a head OR a body. You must have
+            one or the other, but not both. There IS a way to indicate choice between these two that
+            allows either to appear in any order, but we’ll show you that further along in this
+            tutorial. You need to learn about repetition indicators and grouping first.</p>
+        <section>Repetition Indicators</section>
+        <p>We use four repetition indicators, to indicate how much of something we will permit:</p>
+
+        <bullet>Nothing at all: If nothing appears after the word, that means we require one and
+            only one of it. It must show up once, and once only: Example:</bullet>
+        <codeBlock>letter = element letter {head, body}</codeBlock>
+        <p>In this example, we require exactly one (and only one) head, followed in sequence by
+            exactly one (and only one) body.</p>
+        <bullet>Question Mark: ( ? ): Zero or one: The item is optional: it may appear zero or one
+            time, but it cannot appear more than once. So, for example:</bullet>
+        <codeBlock>letter = element letter {head?, body}</codeBlock>
+        <p>Here, we say that the letter element may or may not have one head element inside, but if
+            there is a head, the body element must appear after it. This rule also says that there
+            must be exactly one body within letter (whether there’s a head or not.)</p>
+        <bullet>Plus sign: ( + ): One or more: There MUST be at least one of this, and it may be
+            repeated. For example:</bullet>
+        <codeBlock>body = element body {dateline?, salutation?, paragraph+}</codeBlock>
+        <p>In this example, we indicate that the element body may or may not contain a single
+            dateline element, followed by a single (optional) salutation element, but it MUST
+            contain at least one paragraph and there may be more paragraph elements.</p>
+        <bullet>Asterisk or “splat”: ( * ): Zero or more. This is optional, AND it can be repeated.
+            (The asterisk is very flexible.) Here’s an example from a project that lists individual
+            people’s names (where there must be at least one, but could be more than one),
+            birthplaces and birthdates, and, optionally, events in their lives:</bullet>
+        <codeBlock>person = element person {name+, birthplace, birthday, event*}</codeBlock>
+        <p>Here, we require that each person element must contain at least one (but maybe more than
+            one) name element; exactly one birthplace element; exactly one birthday element; and
+            zero, one, or more than one event element. Because we’re using the comma, in all these
+            examples we’ve been indicating an expected sequence of elements.</p>
+    </subGroup>
+    <subGroup>
+        <subTitle>Grouping with Parentheses ( )</subTitle>
+        <p>Using parentheses, we can group content items and apply the combination and repetition
+            indicators above to make very precise rules. When we use parentheses, these are read by
+            the computer parser from the inside out. For example, here is a rule to control how to
+            organize entries in an XML bibliography citation. Notice the grouping around author |
+            editor:</p>
+
+        <codeBlock>bibEntry = element bibEntry { (author | editor)+, title+, publisher,
+            publicationPlace, date }</codeBlock>
+        <p>Reading from the inside out, this means we expect either an author OR an editor element
+            as the first element in the sequence. It also means that this choice may be made one or
+            more than one time: so the computer parser can permit an author element as well as an
+            editor element in any combination, as long as there is at least one author OR at least
+            one editor. Realize the power of the parentheses: This means, with grouping used
+            together with the “pipe” and a repetition indicator (plus sign or asterisk), we can
+            permit either one or both elements to be repeated.</p>
+        <bullet>If we use an asterisk instead on our parenthetical grouping, consider how this
+            changes the meaning:</bullet>
+        <codeBlock>bibEntry = element bibEntry { (author | editor)*, title+, publisher,
+            publicationPlace, date }</codeBlock>
+        <p>This would mean we may not have an author or an editor at all, OR we might have multiple
+            of either one. (It’s more flexible than the plus sign, which demands that there be at
+            least one of something at minimum.)</p>
+    </subGroup>
+    <subGroup>
+        <subTitle>Rules for Elements, Attributes, Plain Text and Other Data Types</subTitle>
+        <p>So far, we’ve just been showing you rules that involve element names. But schemas need to
+            set rules for all the content of an XML document, and that includes attribute names and
+            values, as well as whether an element contains plain text or only other elements, or
+            nothing at all. When an element is permitted to contain both plain text as well as other
+            elements and/or attributes, it is said to have mixed content. When it contains nothing
+            at all, as a self-closing element, it’s said to be empty.</p>
+
+        <section>Rules for Elements with Attributes:</section>
+        <p>Here is an example demonstrating a rule for element to contain an attribute, followed by
+            a rule defining the attribute and indicating a closed list of its permitted values:</p>
+
+        <codeBlock>location = element location {type, text} type = attribute type {"astron" |
+            "atmos" | "ocean" | "river" | "lake" | "island" | "mount" }</codeBlock>
+        <section>Rules for Empty (Self-Closing) Elements:</section>
+        <p>Elements are empty when they contain no text and no other elements. These are
+            self-closing elements, and here’s an example of how to write a rule for one:</p>
+
+        <codeBlock>lineBreak = element lineBreak { empty }</codeBlock>
+        <p>This uses a special reserved word in Relax NG called empty, used especially for this
+            purpose. If we wanted to designate an element named “empty” we’d need to “escape” the
+            reserve character. (More on this below.)</p>
+
+        <p>Empty elements ARE allowed to have attributes, and if we’re using page breaks or line
+            breaks or other “milestone” self-closing elements, we frequently use attributes to hold
+            information. Here’s an example of a rule designating an empty element with
+            attributes:</p>
+
+        <codeBlock>pageBreak = element pageBreak {n, empty} n = attribute n
+            {xsd:integer}</codeBlock>
+        <p>In this example, the attribute n is given a special value, xsd:integer, which means in
+            must contain an integer (or number). This is an example of using a data type, and we’ll
+            give more examples of this below.</p>
+
+        <section>Rules for Text and Mixed Content:</section>
+        <p>We need to designate some elements to contain the text of a document, and to do that
+            Relax NG has a special reserved word, text. (We’re not allowed, without a workaround, to
+            use that reserved word text as an element name, and we’ll show you a couple of
+            workarounds below.) So, let’s say we have an element that we only want to contain plain
+            text. Here’s how we designate it, using the reserve word:</p>
+
+        <codeBlock>name = element name {text}</codeBlock>
+        <p>Often, though, we’ll want to designate an element to contain a mix of plain text, an
+            attribute (or more), and other elements. Imagine a prose paragraph you’ve coded, as a
+            mix of text and elements marking off names, dates, locations, grammar, etc. In these
+            situations, we have an alternate way to designate that text can appear at any point,
+            interspersed with element content:</p>
+
+        <codeBlock>paragraph = element paragraph {mixed {(name | location | date)*}}</codeBlock>
+        <p>This is a more complex syntax than you’ve seen before! Let’s walk through it: First, we
+            say that the element paragraph contains mixed content, with the word mixed in the outer
+            set of curly braces: That word “mixed” indicates there’s plain text floating around in
+            any order with the element content that follows. Notice there’s an inner set of curly
+            braces that we always use after mixed, and that contains the element content. We’ll go
+            on to define name, location, and date as elements with their own rules.</p>
+
+        <p>Now, a review of grouping: In the above example, we made this internal grouping: (name |
+            location | date)*. This means that a paragraph may contain none, some, or all three of
+            these element choices, in any order, so it’s a very versatile expression for keeping our
+            options open! How would it be different if we wrote the following? (name | location |
+            date)+ (Hint: look up at the Grouping section to review this.)</p>
+
+        <section>Data Types (such as unique identifiers, numbers, or standard date
+            entries):</section>
+        <p>We may want to constrain the contents of an element or attribute to specialized kinds of
+            data. For example, if we’re coding a list of people who show up in a big pile of
+            documents, and who might show up under different names, we might want to designate a
+            core list of person elements that contain a unique identifier in an attribute value,
+            sort of an id-card in XML to help us keep track of them. It’s traditional in XML to
+            designate an @xml:id to hold a unique identifier that cannot be used anywhere else, and
+            for this there’s a data type called xsd:ID. Notice two things about this example: 1)
+            Relax NG apparently doesn’t permit colons inside labels, so our label is simply "xmlid"
+            to escape the problem, and 2) We’ve written this so the identifying info can all be held
+            inside an empty (self-closing) element!)</p>
+
+        <codeBlock>person = element person { xmlid, type, gender, empty } xmlid = attribute xml:id {
+            xsd:ID } type = attribute type { text } gender = attribute gender { "m" | "f"
+            }</codeBlock>
+        <p>If we want to indicate that an element or an attribute may only contain a simple number
+            without decimal places (an integer value), use the xsd:integer data type:</p>
+
+        <codeBlock>count = element count {xsd:integer}</codeBlock>
+        <p>Here are examples of how we constrain a date element to contain attributes, either @when
+            to indicate one specific date, OR a pair of attributes, @from and @to, used together to
+            indicate a span of time, like this &lt;date from="1976-07-05" to="1980-08-15"/&gt;.
+            We’re using standard ISO format for dates, with numbers separated by hyphens in a
+            patterned order: yyyy-mm-dd, as in 2017-04-09. However, we might imagine that in a given
+            document, we might not know every part of a date. Maybe we just have a year, or a year
+            and month. There are different data type values for each option, which we give below,
+            since this is something we frequently need to indicate in our projects. Notice how we’ve
+            written these out as options. The attribute value must be written in one of the three
+            different data type formats:</p>
+
+        <codeBlock>date = element date {(when | (from, to)), text} when = attribute when {xsd:date |
+            xsd:gYearMonth | xsd:gYear} from = attribute from {xsd:date | xsd:gYearMonth |
+            xsd:gYear} to = attribute to {xsd:date | xsd:gYearMonth | xsd:gYear}</codeBlock>
+        <p>Now, that example works just fine, but it’s repetitive. We can set a pattern in Relax-NG
+            if we create a complicated content model and need to use it on multiple elements or
+            attributes. We show you how to do that in the next section.</p>
+
+        <p>Keep in mind that you can define datatypes for the content of elements as well as
+            attribute values. You may wish to work with other data types in your XML than we are
+            modeling in this tutorial, and you may get some good ideas from project encoding from
+            reviewing this Datatype Reference clickable list. (Note that the examples given for use
+            of each datatype on this list are given in Relax NG XML syntax, which is written in
+            angle-bracket code, but is otherwise very similar to the compact syntax we are using. In
+            addition to the standard datatypes we have discussed already, here is a short list of
+            datatypes that we use most in our work:</p>
+
+        <bullet>xsd:ID: Used for defining unique identifier values for proper names (people, places,
+            contexts). In our projects we often create a list of standard names with unique
+            identifier values for on @id or @xml:id attributes. We use the xsd:ID datatytpe for the
+            unique value. An xsd:ID value may only be used once.</bullet>
+        <bullet>xsd:IDREF and xsd:IDREFS: When we define standard names and unique identifiers, we
+            then want to point to those names and values using an xsd:IDREF datatype that contains
+            an ID value. The IDREF can be used over and over, any time a particular proper name is
+            referenced. xsd:IDREFS lets you set multiple values in an attribute separated by a
+            single white space, in cases where you want to indicate a plurality of reference values.
+            We might set xsd:IDREFS to be the datatype of a @ref attribute for referencing, although
+            more typically we will use a different schema language, Schematron, to fine-tune how
+            referencing attributes point back to defined IDs. (More on this later in the
+            course.)</bullet>
+        <bullet>xsd:anyURI: Use this to mandate an absolute URL beginning with http://, but not for
+            a relative link to a path in your project directory.</bullet>
+        <bullet>Datatypes for numbers: There are many options here, but Michael Kay claims that the
+            best ones to use for just about any project are:</bullet>
+        <bullet>xsd:integer: As we discussed above, this defines a simple numerical value with no
+            decimal places.</bullet>
+        <bullet>xsd:double or xsd:float: These datatypes are for floating-point numbers that could
+            potentially have infinite decimal places, and they appear to be interchangeable formats.
+            When we write processing code (in XSLT or XQuery, later in the course) that calculates a
+            mathematical operation, the default output will always be in xs:double.</bullet>
+        <bullet>xsd:decimal: Use this for short decimal notations that definitely end after a few
+            spaces, as in for dollars and cents: 1.25. Not as flexible as xs:double or
+            xs:float.</bullet>
+        <section>Writing Patterns (so you don’t have to repeat yourself):</section>
+        <p>In the previous example we used the same content model repeatedly for three different
+            attributes, and we really don’t have to do that. If you’ve modelled something
+            complicated in your curly braces { } and want to re-use it on multiple elements or
+            attributes, we recommend setting up a pattern, which just involves setting a label = ( a
+            pattern ). Note we use parentheses for this (not curly braces). Here’s how to set and
+            refer to a pattern:</p>
+
+        <codeBlock>datePattern = (xsd:date | xsd:gYearMonth| xsd:gYear) date = element date {(when
+            |(from, to)), empty} when = attribute when {datePattern} from = attribute from
+            {datePattern} to = attribute to {datePattern}</codeBlock>
+        <section>Escaping a reserved word so we can use it as a label:</section>
+        <p>If you need to use the word, text, as label in a rule, you’ll have to “escape” it by
+            using a backslash in front, like this: \text. (Or, you can use a different word entirely
+            for the label.) The same goes for the other reserve words in Relax NG, including the
+            word, list. Here’s a link to the complete list of “keywords” (or reserved words) in
+            Relax NG.</p>
+
+        <p>Note that when you escape a reserved word, you only escape it in the label position,
+            remembering that we use labels at the beginning of a rule and refer to them inside the {
+            } curly braces. Note: You are not permitted to escape the word when it is an element or
+            attribute name: those names must be literal (and the backslash escape character is not
+            needed or allowed there).</p>
+
+        <p>Here are some example rules involving us escaping a reserved word. Either approach
+            (version 1 or version 2) is fine; they result in the same thing. Notice where we use the
+            escape character, and where we don’t!</p>
+
+        <p>Version 1 (with the reserved word, list):</p>
+
+        <codeBlock>chapter = element chapter {mixed {(paragraph | \list)*}} \list = element list
+            {item+} item = element item {mixed {\list*}}</codeBlock>
+        <p>Version 2 (with the same reserved word, list):</p>
+
+        <codeBlock>chapter = element chapter {mixed {(paragraph | listing)*}} listing = element list
+            {item+} item = element item {mixed {listing*}}</codeBlock>
+    </subGroup>
+    <subGroup>
+        <subTitle>The Big Picture: A Sample XML File and Its Schema</subTitle>
+        <p>We borrow this code, with appreciation, from Obdurodon, to show you a sample, fairly
+            short XML file, and its Relax NG Schema:</p>
+
+        <codeBlock>&lt;play&gt; &lt;heading&gt; &lt;title&gt;The Importance of Being
+            Ernest&lt;/title&gt; &lt;year&gt;1895&lt;/year&gt; &lt;/heading&gt; &lt;body&gt;
+            &lt;quote speaker="Algernon"&gt;I don’t know that I am much interested in your family
+            life, Lane.&lt;/quote&gt; &lt;quote speaker="Lane"&gt;No, sir; it is not a very
+            interesting subject. I never think of it myself.&lt;/quote&gt; &lt;/body&gt;
+            &lt;/play&gt;</codeBlock>
+        <p>Here’s a complete Relax NG schema for this sample XML file. In order for the schema to be
+            complete and for it to function as a valid schema for the XML, it must account for every
+            component of the XML document, all of its elements, attributes and text. Our friends at
+            Obdurodon give an example of the schema below missing one line, and indicate how this
+            will throw off the entire schema validation. Every element and attribute must be defined
+            for your schema to work and be valid.</p>
+
+        <codeBlock>start = play play = element play {heading, body} heading = element heading
+            {title, year} title = element title {text} year = element year {xsd:int} body = element
+            body {quote*} quote = element quote {speaker, text} speaker = attribute speaker
+            {text}</codeBlock>
+    </subGroup>
+    <subGroup>
+        <subTitle>Using &lt;oXygen/&gt; to Write a Relax NG Schema</subTitle>
+        <p>To start writing a Relax NG Schema in Compact Syntax, go to File and New, or click on the
+            icon like a sheet of paper in the upper left corner. In the menu, look under “New” or
+            “Recently Used” for “RELAX NG Schema - Compact,” and select it and click the “create”
+            button. Just delete all the boilerplate lines at the top of the file and start with a
+            completely blank file. Begin by typing start = and designate your root element as we
+            discussed above. Keep writing until you’ve completely defined rules for the full content
+            of your XML document. (Notice that as you write, &lt;oXygen/&gt; generates errors until
+            you’ve defined each new label you enter.) Save your work somewhere convenient. (We
+            usually save our schema files in the same folder as our XML.)</p>
+
+        <section>How to Associate a Schema and Run a Validation Check in &lt;oXygen/&gt;</section>
+        <p>In order to run a validation check on your XML file, you need to associate your Relax NG
+            schema with the XML. To do this, in &lt;oXygen/&gt; open the XML file you want to
+            validate. Go to “Document” on the top menu bar, and on the drop-down menu, select
+            “Schema,” and then “Associate Schema.” Then browse for the Relax NG Schema you wrote,
+            select it and click “OK.” When you successfully associate your schema, &lt;oXygen/&gt;
+            inserts a line of code at the top of your document, called a “schema line.”, which looks
+            like this:</p>
+
+        <codeBlock>&lt;?xml-model href="ExampleRelaxNG.rnc"
+            type="application/relax-ng-compact-syntax"?&gt;</codeBlock>
+        <p>If your document fails its schema validation, the square in the upper left corner turns
+            red (just as it does for a formedness error), only you’ll see a different error message
+            for failing a validity check. To be sure you’re running a validity check (or if you’ve
+            just edited your schema file and want to re-run it), select the icon that looks like a
+            red check-mark on a piece of paper, and oXygen will run a fresh validation check. (The
+            keyboard shortcut in Windows for running a validation check is Ctrl+Shift+v, and on a
+            Mac the shortcut is Cmd+Shift+v.) One more thing! When you’ve associated a schema once
+            with your XML file, you don’t need to repeat the association! Once you have your schema
+            line at the top of the XML file, you can simply update your Relax NG file, save it, and
+            simply re-run the validation check in &lt;oXygen/&gt;.</p>
+    </subGroup>
+</xml>
