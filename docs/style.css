@@ -3,3 +3,21 @@ body
     background-color: pink;
     color: #172947;
 }
+div
+{
+    display:flex;
+    flex-direction: row;
+}
+txt.div
+{
+    flex: 30%;
+    
+}
+img.div
+{
+    flex: 70%;
+}
+img
+{
+    width: 100%;
+}
